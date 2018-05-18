@@ -1,98 +1,193 @@
-import { createElement, ReactChild, ReactElement, ReactNode, ReactType } from 'react'
+import njsx, { ArgumentTransformation, Builder, NJSXConfig } from 'njsx'
+import { AnchorHTMLAttributes, AreaHTMLAttributes, AudioHTMLAttributes, BaseHTMLAttributes, BlockquoteHTMLAttributes, ButtonHTMLAttributes, CanvasHTMLAttributes, ColgroupHTMLAttributes, ColHTMLAttributes, DelHTMLAttributes, DetailedHTMLProps, DetailsHTMLAttributes, DialogHTMLAttributes, EmbedHTMLAttributes, FieldsetHTMLAttributes, FormHTMLAttributes, HTMLAttributes, HtmlHTMLAttributes, IframeHTMLAttributes, ImgHTMLAttributes, InputHTMLAttributes, InsHTMLAttributes, KeygenHTMLAttributes, LabelHTMLAttributes, LiHTMLAttributes, LinkHTMLAttributes, MapHTMLAttributes, MenuHTMLAttributes, MetaHTMLAttributes, MeterHTMLAttributes, ObjectHTMLAttributes, OlHTMLAttributes, OptgroupHTMLAttributes, OptionHTMLAttributes, OutputHTMLAttributes, ParamHTMLAttributes, ProgressHTMLAttributes, QuoteHTMLAttributes, ScriptHTMLAttributes, SelectHTMLAttributes, SourceHTMLAttributes, StyleHTMLAttributes, SVGProps, TableHTMLAttributes, TdHTMLAttributes, TextareaHTMLAttributes, ThHTMLAttributes, TimeHTMLAttributes, TrackHTMLAttributes, VideoHTMLAttributes, WebViewHTMLAttributes } from 'react'
 
-// TODO: Replace with spread operator once Typescript suports spread of generics (https://github.com/Microsoft/TypeScript/pull/13288)
-const { assign } = Object
-const { isArray } = Array
 
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-// CONFIGURATION
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-
-export type ArgumentTransformation = (arg: any) => any
-
-export const NJSXConfig: {
-  argumentTransformations: ArgumentTransformation[],
-  dynamicSelectorHandler?: (name: string) => any,
-} = {
-    argumentTransformations: [],
-    dynamicSelectorHandler: (name: string) => {
-      throw new TypeError(`Can't refine by ${name}: No handler for dynamic selector was provided`)
-    },
-  }
-
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-// BUILDERS
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-
-export interface Builder<P> {
-  (): ReactElement<P>,
-  (head: BuilderArgument<P>, ...tail: BuilderArgument<P>[]): Builder<P>
-  readonly [key: string]: Builder<P>
+// TODO: Also extract the id
+// TODO: Refactor this a bit...
+// TODO: Test this transformation (specially that test react classes from argument transformation are acumulative).
+export const CLASSES_FROM_STRINGS: ArgumentTransformation = (arg: any) => {
+  if (typeof arg === 'string' && arg.trim().startsWith('.')) {
+    return (props: {}) => {
+      const { className = '', ...otherProps } = props as any
+      return {
+        ...otherProps,
+        className: [...className.split(' '), ...arg.split('.')].map(c => c.trim()).filter(String).join(' '),
+      }
+    }
+  } else return arg
 }
 
-export type BuilderArgument<P>
-  = BuilderRefinement<P>
-  | undefined
-  | null
-  | boolean
-  | ReactChild
-  | (() => ReactElement<any>)
-  | Partial<P>
-  | BuilderArgumentArray<P>
-export interface BuilderArgumentArray<P> extends Array<BuilderArgument<P>> { }
+NJSXConfig.dynamicSelectorHandler = (arg: string) => `.${arg}`
+NJSXConfig.argumentTransformations = [CLASSES_FROM_STRINGS]
 
 
-export type BuilderState<P> = Partial<P & { children: ReactNode[] }>
+export const a: Builder<DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>> = njsx('a')
+export const abbr: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('abbr')
+export const address: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('address')
+export const area: Builder<DetailedHTMLProps<AreaHTMLAttributes<HTMLAreaElement>, HTMLAreaElement>> = njsx('area')
+export const article: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('article')
+export const aside: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('aside')
+export const audio: Builder<DetailedHTMLProps<AudioHTMLAttributes<HTMLAudioElement>, HTMLAudioElement>> = njsx('audio')
+export const b: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('b')
+export const base: Builder<DetailedHTMLProps<BaseHTMLAttributes<HTMLBaseElement>, HTMLBaseElement>> = njsx('base')
+export const bdi: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('bdi')
+export const bdo: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('bdo')
+export const big: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('big')
+export const blockquote: Builder<DetailedHTMLProps<BlockquoteHTMLAttributes<HTMLElement>, HTMLElement>> = njsx('blockquote')
+export const body: Builder<DetailedHTMLProps<HTMLAttributes<HTMLBodyElement>, HTMLBodyElement>> = njsx('body')
+export const br: Builder<DetailedHTMLProps<HTMLAttributes<HTMLBRElement>, HTMLBRElement>> = njsx('br')
+export const button: Builder<DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>> = njsx('button')
+export const canvas: Builder<DetailedHTMLProps<CanvasHTMLAttributes<HTMLCanvasElement>, HTMLCanvasElement>> = njsx('canvas')
+export const caption: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('caption')
+export const cite: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('cite')
+export const code: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('code')
+export const col: Builder<DetailedHTMLProps<ColHTMLAttributes<HTMLTableColElement>, HTMLTableColElement>> = njsx('col')
+export const colgroup: Builder<DetailedHTMLProps<ColgroupHTMLAttributes<HTMLTableColElement>, HTMLTableColElement>> = njsx('colgroup')
+export const data: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('data')
+export const datalist: Builder<DetailedHTMLProps<HTMLAttributes<HTMLDataListElement>, HTMLDataListElement>> = njsx('datalist')
+export const dd: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('dd')
+export const del: Builder<DetailedHTMLProps<DelHTMLAttributes<HTMLElement>, HTMLElement>> = njsx('del')
+export const details: Builder<DetailedHTMLProps<DetailsHTMLAttributes<HTMLElement>, HTMLElement>> = njsx('details')
+export const dfn: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('dfn')
+export const dialog: Builder<DetailedHTMLProps<DialogHTMLAttributes<HTMLDialogElement>, HTMLDialogElement>> = njsx('dialog')
+export const div: Builder<DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>> = njsx('div')
+export const dl: Builder<DetailedHTMLProps<HTMLAttributes<HTMLDListElement>, HTMLDListElement>> = njsx('dl')
+export const dt: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('dt')
+export const em: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('em')
+export const embed: Builder<DetailedHTMLProps<EmbedHTMLAttributes<HTMLEmbedElement>, HTMLEmbedElement>> = njsx('embed')
+export const fieldset: Builder<DetailedHTMLProps<FieldsetHTMLAttributes<HTMLFieldSetElement>, HTMLFieldSetElement>> = njsx('fieldset')
+export const figcaption: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('figcaption')
+export const figure: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('figure')
+export const footer: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('footer')
+export const form: Builder<DetailedHTMLProps<FormHTMLAttributes<HTMLFormElement>, HTMLFormElement>> = njsx('form')
+export const h1: Builder<DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>> = njsx('h1')
+export const h2: Builder<DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>> = njsx('h2')
+export const h3: Builder<DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>> = njsx('h3')
+export const h4: Builder<DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>> = njsx('h4')
+export const h5: Builder<DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>> = njsx('h5')
+export const h6: Builder<DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>> = njsx('h6')
+export const head: Builder<DetailedHTMLProps<HTMLAttributes<HTMLHeadElement>, HTMLHeadElement>> = njsx('head')
+export const header: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('header')
+export const hgroup: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('hgroup')
+export const hr: Builder<DetailedHTMLProps<HTMLAttributes<HTMLHRElement>, HTMLHRElement>> = njsx('hr')
+export const html: Builder<DetailedHTMLProps<HtmlHTMLAttributes<HTMLHtmlElement>, HTMLHtmlElement>> = njsx('html')
+export const i: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('i')
+export const iframe: Builder<DetailedHTMLProps<IframeHTMLAttributes<HTMLIFrameElement>, HTMLIFrameElement>> = njsx('iframe')
+export const img: Builder<DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>> = njsx('img')
+export const input: Builder<DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>> = njsx('input')
+export const ins: Builder<DetailedHTMLProps<InsHTMLAttributes<HTMLModElement>, HTMLModElement>> = njsx('ins')
+export const kbd: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('kbd')
+export const keygen: Builder<DetailedHTMLProps<KeygenHTMLAttributes<HTMLElement>, HTMLElement>> = njsx('keygen')
+export const label: Builder<DetailedHTMLProps<LabelHTMLAttributes<HTMLLabelElement>, HTMLLabelElement>> = njsx('label')
+export const legend: Builder<DetailedHTMLProps<HTMLAttributes<HTMLLegendElement>, HTMLLegendElement>> = njsx('legend')
+export const li: Builder<DetailedHTMLProps<LiHTMLAttributes<HTMLLIElement>, HTMLLIElement>> = njsx('li')
+export const link: Builder<DetailedHTMLProps<LinkHTMLAttributes<HTMLLinkElement>, HTMLLinkElement>> = njsx('link')
+export const main: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('main')
+export const map: Builder<DetailedHTMLProps<MapHTMLAttributes<HTMLMapElement>, HTMLMapElement>> = njsx('map')
+export const mark: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('mark')
+export const menu: Builder<DetailedHTMLProps<MenuHTMLAttributes<HTMLElement>, HTMLElement>> = njsx('menu')
+export const menuitem: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('menuitem')
+export const meta: Builder<DetailedHTMLProps<MetaHTMLAttributes<HTMLMetaElement>, HTMLMetaElement>> = njsx('meta')
+export const meter: Builder<DetailedHTMLProps<MeterHTMLAttributes<HTMLElement>, HTMLElement>> = njsx('meter')
+export const nav: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('nav')
+export const noindex: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('noindex')
+export const noscript: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('noscript')
+export const object: Builder<DetailedHTMLProps<ObjectHTMLAttributes<HTMLObjectElement>, HTMLObjectElement>> = njsx('object')
+export const ol: Builder<DetailedHTMLProps<OlHTMLAttributes<HTMLOListElement>, HTMLOListElement>> = njsx('ol')
+export const optgroup: Builder<DetailedHTMLProps<OptgroupHTMLAttributes<HTMLOptGroupElement>, HTMLOptGroupElement>> = njsx('optgroup')
+export const option: Builder<DetailedHTMLProps<OptionHTMLAttributes<HTMLOptionElement>, HTMLOptionElement>> = njsx('option')
+export const output: Builder<DetailedHTMLProps<OutputHTMLAttributes<HTMLElement>, HTMLElement>> = njsx('output')
+export const p: Builder<DetailedHTMLProps<HTMLAttributes<HTMLParagraphElement>, HTMLParagraphElement>> = njsx('p')
+export const param: Builder<DetailedHTMLProps<ParamHTMLAttributes<HTMLParamElement>, HTMLParamElement>> = njsx('param')
+export const picture: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('picture')
+export const pre: Builder<DetailedHTMLProps<HTMLAttributes<HTMLPreElement>, HTMLPreElement>> = njsx('pre')
+export const progress: Builder<DetailedHTMLProps<ProgressHTMLAttributes<HTMLProgressElement>, HTMLProgressElement>> = njsx('progress')
+export const q: Builder<DetailedHTMLProps<QuoteHTMLAttributes<HTMLQuoteElement>, HTMLQuoteElement>> = njsx('q')
+export const rp: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('rp')
+export const rt: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('rt')
+export const ruby: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('ruby')
+export const s: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('s')
+export const samp: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('samp')
+export const script: Builder<DetailedHTMLProps<ScriptHTMLAttributes<HTMLScriptElement>, HTMLScriptElement>> = njsx('script')
+export const section: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('section')
+export const select: Builder<DetailedHTMLProps<SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement>> = njsx('select')
+export const small: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('small')
+export const source: Builder<DetailedHTMLProps<SourceHTMLAttributes<HTMLSourceElement>, HTMLSourceElement>> = njsx('source')
+export const span: Builder<DetailedHTMLProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement>> = njsx('span')
+export const strong: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('strong')
+export const style: Builder<DetailedHTMLProps<StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement>> = njsx('style')
+export const sub: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('sub')
+export const summary: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('summary')
+export const sup: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('sup')
+export const table: Builder<DetailedHTMLProps<TableHTMLAttributes<HTMLTableElement>, HTMLTableElement>> = njsx('table')
+export const tbody: Builder<DetailedHTMLProps<HTMLAttributes<HTMLTableSectionElement>, HTMLTableSectionElement>> = njsx('tbody')
+export const td: Builder<DetailedHTMLProps<TdHTMLAttributes<HTMLTableDataCellElement>, HTMLTableDataCellElement>> = njsx('td')
+export const textarea: Builder<DetailedHTMLProps<TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>> = njsx('textarea')
+export const tfoot: Builder<DetailedHTMLProps<HTMLAttributes<HTMLTableSectionElement>, HTMLTableSectionElement>> = njsx('tfoot')
+export const th: Builder<DetailedHTMLProps<ThHTMLAttributes<HTMLTableHeaderCellElement>, HTMLTableHeaderCellElement>> = njsx('th')
+export const thead: Builder<DetailedHTMLProps<HTMLAttributes<HTMLTableSectionElement>, HTMLTableSectionElement>> = njsx('thead')
+export const time: Builder<DetailedHTMLProps<TimeHTMLAttributes<HTMLElement>, HTMLElement>> = njsx('time')
+export const title: Builder<DetailedHTMLProps<HTMLAttributes<HTMLTitleElement>, HTMLTitleElement>> = njsx('title')
+export const tr: Builder<DetailedHTMLProps<HTMLAttributes<HTMLTableRowElement>, HTMLTableRowElement>> = njsx('tr')
+export const track: Builder<DetailedHTMLProps<TrackHTMLAttributes<HTMLTrackElement>, HTMLTrackElement>> = njsx('track')
+export const u: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('u')
+export const ul: Builder<DetailedHTMLProps<HTMLAttributes<HTMLUListElement>, HTMLUListElement>> = njsx('ul')
+export const video: Builder<DetailedHTMLProps<VideoHTMLAttributes<HTMLVideoElement>, HTMLVideoElement>> = njsx('video')
+export const wbr: Builder<DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>> = njsx('wbr')
+export const webview: Builder<DetailedHTMLProps<WebViewHTMLAttributes<HTMLWebViewElement>, HTMLWebViewElement>> = njsx('webview')
 
-export type BuilderRefinement<P> = (state: BuilderState<P>) => BuilderState<P>
-
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-// FACADE
-// ══════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-
-export type NJSX = <P>(type: ReactType<P>) => Builder<P>
-const njsx = <P>(type: ReactType<P>, baseState: BuilderState<P> = {}): Builder<P> => {
-  const builder = (
-    (...args: BuilderArgument<P>[]) => !args.length
-      ? createElement(type, baseState as P, ...baseState.children || [])
-      : njsx(type, args.reduce<BuilderState<P>>(applyArgument, baseState))
-  ) as Builder<P>
-
-  return !NJSXConfig.dynamicSelectorHandler ? builder : new Proxy(builder, {
-    get(target, name) {
-      if (name === '__isNJSXBuilder__') return true
-      return target(NJSXConfig.dynamicSelectorHandler!(name.toString()))
-    },
-  })
-}
-
-function applyArgument<P>(state: BuilderState<P>, baseArg: BuilderArgument<P>): BuilderState<P> {
-  const arg = NJSXConfig.argumentTransformations.reduce((s, tx) => tx(s), baseArg)
-
-  if (isIgnored(arg)) return state
-  if (isArray(arg)) return arg.reduce(applyArgument, state)
-  if (isBuilder(arg)) return addChild(state, arg())
-  if (isChild(arg)) return addChild(state, arg)
-  if (typeof arg === 'object') return assign({}, state, arg)
-  if (typeof arg === 'function') return arg(state)
-
-  throw new TypeError(`Unsupported NJSX argument: ${arg}`)
-}
-
-function isBuilder(target: any): target is () => ReactElement<any> {
-  return target.__isNJSXBuilder__
-}
-
-function isIgnored(target: any): target is null | undefined | boolean {
-  return target === null || target === undefined || typeof target === 'boolean'
-}
-
-function isChild(target: any): target is number | string | ReactElement<any> {
-  return typeof target === 'number' || typeof target === 'string' || typeof target === 'object' && !!target.type
-}
-
-function addChild<P>(state: BuilderState<P>, child: ReactNode) {
-  return assign({}, state, { children: [...state.children || [], child] })
-}
-
-export default njsx as NJSX
+// SVG
+export const svg: Builder<SVGProps<SVGSVGElement>> = njsx('svg')
+export const animate: Builder<SVGProps<SVGElement>> = njsx('animate')
+export const animateTransform: Builder<SVGProps<SVGElement>> = njsx('animateTransform')
+export const circle: Builder<SVGProps<SVGCircleElement>> = njsx('circle')
+export const clipPath: Builder<SVGProps<SVGClipPathElement>> = njsx('clipPath')
+export const defs: Builder<SVGProps<SVGDefsElement>> = njsx('defs')
+export const desc: Builder<SVGProps<SVGDescElement>> = njsx('desc')
+export const ellipse: Builder<SVGProps<SVGEllipseElement>> = njsx('ellipse')
+export const feBlend: Builder<SVGProps<SVGFEBlendElement>> = njsx('feBlend')
+export const feColorMatrix: Builder<SVGProps<SVGFEColorMatrixElement>> = njsx('feColorMatrix')
+export const feComponentTransfer: Builder<SVGProps<SVGFEComponentTransferElement>> = njsx('feComponentTransfer')
+export const feComposite: Builder<SVGProps<SVGFECompositeElement>> = njsx('feComposite')
+export const feConvolveMatrix: Builder<SVGProps<SVGFEConvolveMatrixElement>> = njsx('feConvolveMatrix')
+export const feDiffuseLighting: Builder<SVGProps<SVGFEDiffuseLightingElement>> = njsx('feDiffuseLighting')
+export const feDisplacementMap: Builder<SVGProps<SVGFEDisplacementMapElement>> = njsx('feDisplacementMap')
+export const feDistantLight: Builder<SVGProps<SVGFEDistantLightElement>> = njsx('feDistantLight')
+export const feFlood: Builder<SVGProps<SVGFEFloodElement>> = njsx('feFlood')
+export const feFuncA: Builder<SVGProps<SVGFEFuncAElement>> = njsx('feFuncA')
+export const feFuncB: Builder<SVGProps<SVGFEFuncBElement>> = njsx('feFuncB')
+export const feFuncG: Builder<SVGProps<SVGFEFuncGElement>> = njsx('feFuncG')
+export const feFuncR: Builder<SVGProps<SVGFEFuncRElement>> = njsx('feFuncR')
+export const feGaussianBlur: Builder<SVGProps<SVGFEGaussianBlurElement>> = njsx('feGaussianBlur')
+export const feImage: Builder<SVGProps<SVGFEImageElement>> = njsx('feImage')
+export const feMerge: Builder<SVGProps<SVGFEMergeElement>> = njsx('feMerge')
+export const feMergeNode: Builder<SVGProps<SVGFEMergeNodeElement>> = njsx('feMergeNode')
+export const feMorphology: Builder<SVGProps<SVGFEMorphologyElement>> = njsx('feMorphology')
+export const feOffset: Builder<SVGProps<SVGFEOffsetElement>> = njsx('feOffset')
+export const fePointLight: Builder<SVGProps<SVGFEPointLightElement>> = njsx('fePointLight')
+export const feSpecularLighting: Builder<SVGProps<SVGFESpecularLightingElement>> = njsx('feSpecularLighting')
+export const feSpotLight: Builder<SVGProps<SVGFESpotLightElement>> = njsx('feSpotLight')
+export const feTile: Builder<SVGProps<SVGFETileElement>> = njsx('feTile')
+export const feTurbulence: Builder<SVGProps<SVGFETurbulenceElement>> = njsx('feTurbulence')
+export const filter: Builder<SVGProps<SVGFilterElement>> = njsx('filter')
+export const foreignObject: Builder<SVGProps<SVGForeignObjectElement>> = njsx('foreignObject')
+export const g: Builder<SVGProps<SVGGElement>> = njsx('g')
+export const image: Builder<SVGProps<SVGImageElement>> = njsx('image')
+export const line: Builder<SVGProps<SVGLineElement>> = njsx('line')
+export const linearGradient: Builder<SVGProps<SVGLinearGradientElement>> = njsx('linearGradient')
+export const marker: Builder<SVGProps<SVGMarkerElement>> = njsx('marker')
+export const mask: Builder<SVGProps<SVGMaskElement>> = njsx('mask')
+export const metadata: Builder<SVGProps<SVGMetadataElement>> = njsx('metadata')
+export const path: Builder<SVGProps<SVGPathElement>> = njsx('path')
+export const pattern: Builder<SVGProps<SVGPatternElement>> = njsx('pattern')
+export const polygon: Builder<SVGProps<SVGPolygonElement>> = njsx('polygon')
+export const polyline: Builder<SVGProps<SVGPolylineElement>> = njsx('polyline')
+export const radialGradient: Builder<SVGProps<SVGRadialGradientElement>> = njsx('radialGradient')
+export const rect: Builder<SVGProps<SVGRectElement>> = njsx('rect')
+export const stop: Builder<SVGProps<SVGStopElement>> = njsx('stop')
+export const symbol: Builder<SVGProps<SVGSymbolElement>> = njsx('symbol')
+export const text: Builder<SVGProps<SVGTextElement>> = njsx('text')
+export const textPath: Builder<SVGProps<SVGTextPathElement>> = njsx('textPath')
+export const tspan: Builder<SVGProps<SVGTSpanElement>> = njsx('tspan')
+export const use: Builder<SVGProps<SVGUseElement>> = njsx('use')
+export const view: Builder<SVGProps<SVGViewElement>> = njsx('view')
