@@ -9,11 +9,13 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "removeComments": true,
     "moduleResolution": "node",
     "jsx": "react"
   },
   "exclude": [
     "node_modules",
+    "src/**.test.*",
     "dist"
   ]
 }

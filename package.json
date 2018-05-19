@@ -1,6 +1,6 @@
 {
   "name": "njsx-react",
-  "version": "1.0.0-SNAPSHOT",
+  "version": "1.0.1-SNAPSHOT",
   "description": "Basic configuration and default components to work with No-JSX in React projects",
   "repository": "https://github.com/uqbar-project/njsx-react",
   "author": "Nicolás Scarcella",
@@ -11,14 +11,17 @@
     "dist"
   ],
   "scripts": {
-    "build": "rm -rf dist && tsc && rm -f dist/*.test.* && cp package.json README.md dist/"
+    "build": "rm -rf dist && tsc"
   },
   "dependencies": {
-    "njsx": "../njsx/dist/",
-    "react": "^16.3.2"
+    "njsx": "^3.0.0-SNAPSHOT"
+  },
+  "peerDependencies": {
+    "react": ">=15.0.0"
   },
   "devDependencies": {
-    "@types/react": "^16.3.13",
+    "@types/react": "^16.3.14",
+    "react": "15.0.0",
     "tslint": "^5.10.0",
     "typescript": "^2.8.3"
   },
