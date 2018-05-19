@@ -12,11 +12,11 @@
   ],
   "scripts": {
     "build": "rm -rf dist && tsc",
-    "test": "",
-    "prepack": "yarn build"
+    "test": "echo ok",
+    "prepublishOnly": "yarn test && yarn build"
   },
   "dependencies": {
-    "njsx": "^3.0.0-SNAPSHOT"
+    "njsx": "^3.0.1-SNAPSHOT"
   },
   "peerDependencies": {
     "react": ">=15.0.0"

@@ -209,9 +209,9 @@ minimatch@^3.0.4:
   dependencies:
     brace-expansion "^1.1.7"
 
-njsx@^3.0.0-SNAPSHOT:
-  version "3.0.0-SNAPSHOT"
-  resolved "https://registry.yarnpkg.com/njsx/-/njsx-3.0.0-SNAPSHOT.tgz#4ad7d930449c23b7bb1d158a9a9a7d422ac148de"
+njsx@^3.0.1-SNAPSHOT:
+  version "3.0.1-SNAPSHOT"
+  resolved "https://registry.yarnpkg.com/njsx/-/njsx-3.0.1-SNAPSHOT.tgz#b2f2eee980a51b8051943b3aa02bf3afdb352b4e"
 
 node-fetch@^1.0.1:
   version "1.7.3"
